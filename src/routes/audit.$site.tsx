@@ -13,11 +13,32 @@ import {
   Sparkles,
   ExternalLink,
   Monitor,
+  FileText,
+  GitCompare,
+  TrendingUp,
+  Code2,
+  BarChart3,
+  Search,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Filter,
 } from "lucide-react";
+import { useState } from "react";
 import { SemrushShell } from "@/components/semrush-shell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+
+type TabKey =
+  | "overview"
+  | "issues"
+  | "crawled"
+  | "statistics"
+  | "compare"
+  | "progress"
+  | "jsimpact";
 
 export const Route = createFileRoute("/audit/$site")({
   head: ({ params }) => ({
@@ -34,6 +55,7 @@ export const Route = createFileRoute("/audit/$site")({
 
 function AuditPage() {
   const { site } = Route.useParams();
+  const [tab, setTab] = useState<TabKey>("overview");
   return (
     <SemrushShell active="seo">
       <Breadcrumbs site={site} />
@@ -41,10 +63,20 @@ function AuditPage() {
 
       <div className="px-6 pb-10">
         <AuditHeader site={site} />
-        <AuditTabs />
-        <OverviewGrid site={site} />
-        <ChartsRow />
-        <IssuesTable />
+        <AuditTabs active={tab} onChange={setTab} />
+        {tab === "overview" && (
+          <>
+            <OverviewGrid site={site} />
+            <ChartsRow />
+            <IssuesTable />
+          </>
+        )}
+        {tab === "issues" && <IssuesView />}
+        {tab === "crawled" && <CrawledPagesView />}
+        {tab === "statistics" && <StatisticsView />}
+        {tab === "compare" && <CompareCrawlsView />}
+        {tab === "progress" && <ProgressView />}
+        {tab === "jsimpact" && <JSImpactView />}
       </div>
     </SemrushShell>
   );
