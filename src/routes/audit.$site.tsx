@@ -207,35 +207,44 @@ function AuditHeader({ site }: { site: string }) {
 
 /* ----------------------------- Tabs ----------------------------- */
 
-function AuditTabs() {
-  const tabs = [
-    { name: "Overview", active: true },
-    { name: "Issues" },
-    { name: "Crawled Pages" },
-    { name: "Statistics" },
-    { name: "Compare Crawls" },
-    { name: "Progress" },
-    { name: "JS Impact" },
+function AuditTabs({
+  active,
+  onChange,
+}: {
+  active: TabKey;
+  onChange: (t: TabKey) => void;
+}) {
+  const tabs: { key: TabKey; name: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { key: "overview", name: "Overview", icon: BarChart3 },
+    { key: "issues", name: "Issues", icon: AlertCircle },
+    { key: "crawled", name: "Crawled Pages", icon: FileText },
+    { key: "statistics", name: "Statistics", icon: BarChart3 },
+    { key: "compare", name: "Compare Crawls", icon: GitCompare },
+    { key: "progress", name: "Progress", icon: TrendingUp },
+    { key: "jsimpact", name: "JS Impact", icon: Code2 },
   ];
   return (
     <div className="mt-5 flex items-center justify-between border-b border-border">
       <nav className="flex flex-wrap items-center gap-1">
-        {tabs.map((t) => (
-          <button
-            key={t.name}
-            className={cn(
-              "relative px-3 py-3 text-[14px] font-medium transition-colors",
-              t.active
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {t.name}
-            {t.active && (
-              <span className="absolute inset-x-3 -bottom-px h-[2px] rounded-full bg-primary" />
-            )}
-          </button>
-        ))}
+        {tabs.map((t) => {
+          const isActive = t.key === active;
+          return (
+            <button
+              key={t.key}
+              onClick={() => onChange(t.key)}
+              className={cn(
+                "relative flex items-center gap-1.5 px-3 py-3 text-[14px] font-medium transition-colors",
+                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <t.icon className="h-3.5 w-3.5" />
+              {t.name}
+              {isActive && (
+                <span className="absolute inset-x-3 -bottom-px h-[2px] rounded-full bg-primary" />
+              )}
+            </button>
+          );
+        })}
       </nav>
       <Button
         size="sm"
